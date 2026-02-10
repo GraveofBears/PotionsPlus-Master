@@ -319,42 +319,6 @@ public class PotionsPlus : BaseUnityPlugin
         PrefabManager.RegisterPrefab(assets, "VFX_StoneGreen");
         PrefabManager.RegisterPrefab(assets, "potionaudio");
 
-        Localizer.AddPlaceholder("pp_flask_elements_description", "duration", flaskOfElementsTTL, ttl => (ttl / 60f).ToString("0.#"));
-        Localizer.AddPlaceholder("pp_flask_secondwind_description", "duration", flaskOfSecondWindTTL, ttl => (ttl / 60f).ToString("0.#"));
-        Localizer.AddPlaceholder("pp_flask_fort_description", "duration", flaskOfFortificationTTL, ttl => (ttl / 60f).ToString("0.#"));
-        Localizer.AddPlaceholder("pp_flask_god_description", "power", flaskOfGodsHealing);
-        Localizer.AddPlaceholder("pp_elixir_healing_description", "power", grandHealingTidePotionHealthOverTime);
-        Localizer.AddPlaceholder("pp_elixir_healing_description", "duration", grandHealingTidePotionTTL);
-        Localizer.AddPlaceholder("pp_elixir_spiritual_description", "power", grandSpiritualHealingPotionHealthOverTime);
-        Localizer.AddPlaceholder("pp_elixir_stam_description", "power", grandStaminaElixirStaminaOverTime);
-        Localizer.AddPlaceholder("pp_elixir_stam_description", "duration", grandStaminaElixirTTL);
-        Localizer.AddPlaceholder("pp_elixir_stealth_description", "duration", grandStealthElixirTTL);
-        Localizer.AddPlaceholder("pp_potion_healing_description", "power", mediumHealingTideFlaskHealthOverTime);
-        Localizer.AddPlaceholder("pp_potion_healing_description", "duration", mediumHealingTideFlaskTTL);
-        Localizer.AddPlaceholder("pp_potion_spiritual_description", "power", mediumSpiritualHealingFlaskHealthOverTime);
-        Localizer.AddPlaceholder("pp_potion_stam_description", "power", mediumStaminaFlaskStaminaOverTime);
-        Localizer.AddPlaceholder("pp_vial_healing_description", "power", lesserHealingTideVialHealthOverTime);
-        Localizer.AddPlaceholder("pp_vial_healing_description", "duration", lesserHealingTideVialTTL);
-        Localizer.AddPlaceholder("pp_vial_spiritual_description", "power", lesserSpiritualHealingVialHealthOverTime);
-        Localizer.AddPlaceholder("pp_vial_stam_description", "power", lesserStaminaVialStaminaOverTime);
-        Localizer.AddPlaceholder("pp_hellbroth_of_flames_description", "power", hellbrothOfFlamesDamage);
-        Localizer.AddPlaceholder("pp_hellbroth_of_frost_description", "power", hellbrothOfFrostDamage);
-        Localizer.AddPlaceholder("pp_hellbroth_of_thors_fury_description", "power", hellbrothOfThorsFuryDamage);
-        Localizer.AddPlaceholder("pp_hellbroth_of_eternal_life_description", "power", hellbrothOfEternalLifeHealing);
-        Localizer.AddPlaceholder("pp_lesser_group_healing_description", "power", brewOfFaintGroupHealingHealthOverTime);
-        Localizer.AddPlaceholder("pp_lesser_group_healing_description", "range", brewOfFaintGroupHealingRange);
-        Localizer.AddPlaceholder("pp_medium_group_healing_description", "power", brewOfGroupHealingHealthOverTime);
-        Localizer.AddPlaceholder("pp_medium_group_healing_description", "range", brewOfGroupHealingRange);
-        Localizer.AddPlaceholder("pp_grand_group_healing_description", "power", brewOfGrandGroupHealingHealthOverTime);
-        Localizer.AddPlaceholder("pp_grand_group_healing_description", "range", brewOfGrandGroupHealingRange);
-        Localizer.AddPlaceholder("pp_brew_of_toxicity_description", "range", brewOfCunningToxicityRange);
-        Localizer.AddPlaceholder("pp_brew_of_fiery_revenge_description", "range", brewOfFieryRevengeRange);
-        Localizer.AddPlaceholder("pp_brew_of_icy_touch_description", "range", brewOfIcyTouchRange);
-        Localizer.AddPlaceholder("pp_brew_of_spiritual_death_description", "range", brewOfSpiritualDeathRange);
-        Localizer.AddPlaceholder("pp_brew_of_thunderous_words_description", "range", brewOfThunderousWordsRange);
-        Localizer.AddPlaceholder("pp_odins_wizard_hat_description", "power", wizardHatConsumeChargeReduction);
-        Localizer.AddPlaceholder("pp_odins_weapon_oil_description", "power", weaponOilDamageIncrease);
-        Localizer.AddPlaceholder("pp_odins_weapon_oil_description", "duration", weaponOilTTL);
     }
 
     [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake))]
