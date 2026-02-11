@@ -5,18 +5,15 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx;
+using TMPro;
 using BepInEx.Configuration;
 using HarmonyLib;
 using ItemManager;
 using ServerSync;
 using SkillManager;
 using UnityEngine;
-using TMPro;
 using LocalizationManager;
-using Localizer = LocalizationManager.Localizer;
 using Random = UnityEngine.Random;
-
-
 namespace PotionsPlus;
 
 [BepInPlugin(ModGUID, ModName, ModVersion)]
@@ -343,152 +340,85 @@ public class PotionsPlus : BaseUnityPlugin
         }
     }
 
-// THIS IS THE START OF THE PLACEHOLDER INITIALIZATION
+    private bool _placeholdersRegistered = false;
 
     private void Start()
     {
-        // Wait for localization to be ready, then initialize placeholders
-        StartCoroutine(InitializePlaceholdersWhenReady());
+        Localizer.OnLocalizationComplete += RegisterPlaceholders;
     }
 
-    private System.Collections.IEnumerator InitializePlaceholdersWhenReady()
+    private void RegisterPlaceholders()
     {
-        // Wait until Localization.instance exists and is initialized
-        while (Localization.instance == null || string.IsNullOrEmpty(Localization.instance.GetSelectedLanguage()))
-        {
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        Debug.Log("[PotionsPlus] Localization ready, initializing placeholders...");
-
-        // Now it's safe to call Localizer.Load
-        try
-        {
-            Localizer.Load();
-            Debug.Log("[PotionsPlus] Localizer.Load() called successfully");
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"[PotionsPlus] Localizer.Load() failed: {ex}");
-        }
-
-        // Give it a bit more time for translations to actually load
-        yield return new WaitForSeconds(0.5f);
-
-        // Check if we can access the loaded translations
-        bool canAddPlaceholders = false;
-        try
-        {
-            // Try a test to see if the localization system is ready
-            var testKey = "pp_flask_elements_description";
-            canAddPlaceholders = Localization.instance.m_translations.ContainsKey(testKey);
-            Debug.Log($"[PotionsPlus] Can add placeholders: {canAddPlaceholders}");
-        }
-        catch (Exception ex)
-        {
-            Debug.LogWarning($"[PotionsPlus] Cannot check translations: {ex.Message}");
-        }
-
-        if (!canAddPlaceholders)
-        {
-            Debug.LogWarning("[PotionsPlus] Localization keys not found - skipping placeholder initialization. This may happen when using certain other mods. Descriptions will use default values.");
-            yield break;
-        }
-
-        // ALL AddPlaceholder calls
-        SafeAddPlaceholder("pp_flask_elements_description", "duration", flaskOfElementsTTL, ttl => (ttl / 60f).ToString("0.#"));
-        SafeAddPlaceholder("pp_flask_secondwind_description", "duration", flaskOfSecondWindTTL, ttl => (ttl / 60f).ToString("0.#"));
-        SafeAddPlaceholder("pp_flask_fort_description", "duration", flaskOfFortificationTTL, ttl => (ttl / 60f).ToString("0.#"));
-
-        SafeAddPlaceholder("pp_flask_god_description", "power", flaskOfGodsHealing);
-
-        SafeAddPlaceholder("pp_elixir_healing_description", "power", grandHealingTidePotionHealthOverTime);
-        SafeAddPlaceholder("pp_elixir_healing_description", "duration", grandHealingTidePotionTTL);
-
-        SafeAddPlaceholder("pp_elixir_spiritual_description", "power", grandSpiritualHealingPotionHealthOverTime);
-
-        SafeAddPlaceholder("pp_elixir_stam_description", "power", grandStaminaElixirStaminaOverTime);
-        SafeAddPlaceholder("pp_elixir_stam_description", "duration", grandStaminaElixirTTL);
-
-        SafeAddPlaceholder("pp_elixir_stealth_description", "duration", grandStealthElixirTTL);
-
-        SafeAddPlaceholder("pp_potion_healing_description", "power", mediumHealingTideFlaskHealthOverTime);
-        SafeAddPlaceholder("pp_potion_healing_description", "duration", mediumHealingTideFlaskTTL);
-
-        SafeAddPlaceholder("pp_potion_spiritual_description", "power", mediumSpiritualHealingFlaskHealthOverTime);
-        SafeAddPlaceholder("pp_potion_stam_description", "power", mediumStaminaFlaskStaminaOverTime);
-
-        SafeAddPlaceholder("pp_vial_healing_description", "power", lesserHealingTideVialHealthOverTime);
-        SafeAddPlaceholder("pp_vial_healing_description", "duration", lesserHealingTideVialTTL);
-
-        SafeAddPlaceholder("pp_vial_spiritual_description", "power", lesserSpiritualHealingVialHealthOverTime);
-        SafeAddPlaceholder("pp_vial_stam_description", "power", lesserStaminaVialStaminaOverTime);
-
-        SafeAddPlaceholder("pp_hellbroth_of_flames_description", "power", hellbrothOfFlamesDamage);
-        SafeAddPlaceholder("pp_hellbroth_of_frost_description", "power", hellbrothOfFrostDamage);
-        SafeAddPlaceholder("pp_hellbroth_of_thors_fury_description", "power", hellbrothOfThorsFuryDamage);
-
-        SafeAddPlaceholder("pp_hellbroth_of_eternal_life_description", "power", hellbrothOfEternalLifeHealing);
-        SafeAddPlaceholder("pp_hellbroth_of_eternal_life_description", "duration", hellbrothOfEternalLifeTTL);
-        SafeAddPlaceholder("pp_hellbroth_of_eternal_life_description", "radius", hellbrothOfEternalLifeRadius);
-
-        SafeAddPlaceholder("pp_lesser_group_healing_description", "power", brewOfFaintGroupHealingHealthOverTime);
-        SafeAddPlaceholder("pp_lesser_group_healing_description", "range", brewOfFaintGroupHealingRange);
-
-        SafeAddPlaceholder("pp_medium_group_healing_description", "power", brewOfGroupHealingHealthOverTime);
-        SafeAddPlaceholder("pp_medium_group_healing_description", "range", brewOfGroupHealingRange);
-
-        SafeAddPlaceholder("pp_grand_group_healing_description", "power", brewOfGrandGroupHealingHealthOverTime);
-        SafeAddPlaceholder("pp_grand_group_healing_description", "range", brewOfGrandGroupHealingRange);
-
-        SafeAddPlaceholder("pp_brew_of_toxicity_description", "range", brewOfCunningToxicityRange);
-        SafeAddPlaceholder("pp_brew_of_fiery_revenge_description", "range", brewOfFieryRevengeRange);
-        SafeAddPlaceholder("pp_brew_of_icy_touch_description", "range", brewOfIcyTouchRange);
-        SafeAddPlaceholder("pp_brew_of_spiritual_death_description", "range", brewOfSpiritualDeathRange);
-        SafeAddPlaceholder("pp_brew_of_thunderous_words_description", "range", brewOfThunderousWordsRange);
-
-        SafeAddPlaceholder("pp_odins_wizard_hat_description", "power", wizardHatConsumeChargeReduction);
-
-        SafeAddPlaceholder("pp_odins_weapon_oil_description", "power", weaponOilDamageIncrease);
-        SafeAddPlaceholder("pp_odins_weapon_oil_description", "duration", weaponOilTTL);
-
-        SafeAddPlaceholder("pp_weapon_oil_description", "power", weaponOilDamageIncrease);
-
-        SafeAddPlaceholder("pp_odins_dragon_staff_description", "power", smokeScreenChanceToBlock);
-        SafeAddPlaceholder("pp_odins_dragon_staff_description", "duration", smokeScreenTTL);
-
-        SafeAddPlaceholder("pp_odins_warlock_hat_description", "power", warlockHatSmokeScreenBlockIncrease);
-        SafeAddPlaceholder("pp_odins_warlock_hat_description", "radius", warlockHatSmokeScreenSizeIncrease);
-        SafeAddPlaceholder("pp_odins_warlock_hat_description", "duration", warlockHatSmokeScreenDurationIncrease);
-
-        Debug.Log("[PotionsPlus] Placeholder initialization complete");
-    }
-
-    private void SafeAddPlaceholder<T>(string key, string placeholder, ConfigEntry<T> config, Func<T, string>? convertConfigValue = null) where T : notnull
-    {
-        if (string.IsNullOrEmpty(key))
-        {
-            Debug.LogError($"[PotionsPlus] Attempted to add placeholder with NULL or empty key! Placeholder: '{placeholder}'");
+        if (_placeholdersRegistered)
             return;
-        }
 
-        if (config == null)
-        {
-            Debug.LogError($"[PotionsPlus] Config is NULL for key '{key}', placeholder '{placeholder}'");
-            return;
-        }
+        _placeholdersRegistered = true;
 
-        try
-        {
-            Localizer.AddPlaceholder(key, placeholder, config, convertConfigValue);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"[PotionsPlus] Failed to add placeholder - Key: '{key}', Placeholder: '{placeholder}', Error: {ex.Message}");
-        }
+        Localizer.AddPlaceholder("pp_flask_elements_description", "duration", flaskOfElementsTTL, ttl => (ttl / 60f).ToString("0.#"));
+        Localizer.AddPlaceholder("pp_flask_secondwind_description", "duration", flaskOfSecondWindTTL, ttl => (ttl / 60f).ToString("0.#"));
+        Localizer.AddPlaceholder("pp_flask_fort_description", "duration", flaskOfFortificationTTL, ttl => (ttl / 60f).ToString("0.#"));
+
+        Localizer.AddPlaceholder("pp_flask_god_description", "power", flaskOfGodsHealing);
+
+        Localizer.AddPlaceholder("pp_elixir_healing_description", "power", grandHealingTidePotionHealthOverTime);
+        Localizer.AddPlaceholder("pp_elixir_healing_description", "duration", grandHealingTidePotionTTL);
+
+        Localizer.AddPlaceholder("pp_elixir_spiritual_description", "power", grandSpiritualHealingPotionHealthOverTime);
+
+        Localizer.AddPlaceholder("pp_elixir_stam_description", "power", grandStaminaElixirStaminaOverTime);
+        Localizer.AddPlaceholder("pp_elixir_stam_description", "duration", grandStaminaElixirTTL);
+
+        Localizer.AddPlaceholder("pp_elixir_stealth_description", "duration", grandStealthElixirTTL);
+
+        Localizer.AddPlaceholder("pp_potion_healing_description", "power", mediumHealingTideFlaskHealthOverTime);
+        Localizer.AddPlaceholder("pp_potion_healing_description", "duration", mediumHealingTideFlaskTTL);
+
+        Localizer.AddPlaceholder("pp_potion_spiritual_description", "power", mediumSpiritualHealingFlaskHealthOverTime);
+        Localizer.AddPlaceholder("pp_potion_stam_description", "power", mediumStaminaFlaskStaminaOverTime);
+
+        Localizer.AddPlaceholder("pp_vial_healing_description", "power", lesserHealingTideVialHealthOverTime);
+        Localizer.AddPlaceholder("pp_vial_healing_description", "duration", lesserHealingTideVialTTL);
+
+        Localizer.AddPlaceholder("pp_vial_spiritual_description", "power", lesserSpiritualHealingVialHealthOverTime);
+        Localizer.AddPlaceholder("pp_vial_stam_description", "power", lesserStaminaVialStaminaOverTime);
+
+        Localizer.AddPlaceholder("pp_hellbroth_of_flames_description", "power", hellbrothOfFlamesDamage);
+        Localizer.AddPlaceholder("pp_hellbroth_of_frost_description", "power", hellbrothOfFrostDamage);
+        Localizer.AddPlaceholder("pp_hellbroth_of_thors_fury_description", "power", hellbrothOfThorsFuryDamage);
+
+        Localizer.AddPlaceholder("pp_hellbroth_of_eternal_life_description", "power", hellbrothOfEternalLifeHealing);
+        Localizer.AddPlaceholder("pp_hellbroth_of_eternal_life_description", "duration", hellbrothOfEternalLifeTTL);
+        Localizer.AddPlaceholder("pp_hellbroth_of_eternal_life_description", "radius", hellbrothOfEternalLifeRadius);
+
+        Localizer.AddPlaceholder("pp_lesser_group_healing_description", "power", brewOfFaintGroupHealingHealthOverTime);
+        Localizer.AddPlaceholder("pp_lesser_group_healing_description", "range", brewOfFaintGroupHealingRange);
+
+        Localizer.AddPlaceholder("pp_medium_group_healing_description", "power", brewOfGroupHealingHealthOverTime);
+        Localizer.AddPlaceholder("pp_medium_group_healing_description", "range", brewOfGroupHealingRange);
+
+        Localizer.AddPlaceholder("pp_grand_group_healing_description", "power", brewOfGrandGroupHealingHealthOverTime);
+        Localizer.AddPlaceholder("pp_grand_group_healing_description", "range", brewOfGrandGroupHealingRange);
+
+        Localizer.AddPlaceholder("pp_brew_of_toxicity_description", "range", brewOfCunningToxicityRange);
+        Localizer.AddPlaceholder("pp_brew_of_fiery_revenge_description", "range", brewOfFieryRevengeRange);
+        Localizer.AddPlaceholder("pp_brew_of_icy_touch_description", "range", brewOfIcyTouchRange);
+        Localizer.AddPlaceholder("pp_brew_of_spiritual_death_description", "range", brewOfSpiritualDeathRange);
+        Localizer.AddPlaceholder("pp_brew_of_thunderous_words_description", "range", brewOfThunderousWordsRange);
+
+        Localizer.AddPlaceholder("pp_odins_wizard_hat_description", "power", wizardHatConsumeChargeReduction);
+
+        Localizer.AddPlaceholder("pp_odins_weapon_oil_description", "power", weaponOilDamageIncrease);
+        Localizer.AddPlaceholder("pp_odins_weapon_oil_description", "duration", weaponOilTTL);
+
+        Localizer.AddPlaceholder("pp_weapon_oil_description", "power", weaponOilDamageIncrease);
+
+        Localizer.AddPlaceholder("pp_odins_dragon_staff_description", "power", smokeScreenChanceToBlock);
+        Localizer.AddPlaceholder("pp_odins_dragon_staff_description", "duration", smokeScreenTTL);
+
+        Localizer.AddPlaceholder("pp_odins_warlock_hat_description", "power", warlockHatSmokeScreenBlockIncrease);
+        Localizer.AddPlaceholder("pp_odins_warlock_hat_description", "radius", warlockHatSmokeScreenSizeIncrease);
+        Localizer.AddPlaceholder("pp_odins_warlock_hat_description", "duration", warlockHatSmokeScreenDurationIncrease);
     }
-
-// THIS IS THE END OF THE PLACEHOLDER INITIALIZATION
 
     private static SE_Stats CheatDeathStatusEffect = null!;
     private static SE_Stats AlchemySkillProcStatusEffect = null!;
@@ -733,7 +663,6 @@ public class PotionsPlus : BaseUnityPlugin
             return true;
         }
     }
-
     public class HealingAoe : MonoBehaviour
     {
         private float nextHealTime = 0f;
