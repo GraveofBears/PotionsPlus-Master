@@ -113,7 +113,23 @@ public static class HellbrothSetup
             potion.Configurable = Configurability.Recipe;
 
             PrefabManager.RegisterPrefab(assets, "Hellbroth_Life_Projectile");
-            PrefabManager.RegisterPrefab(assets, "Hellbroth_Life_Explosion");
+
+            // CRITICAL FIX: Add HealingAoe component to the explosion prefab
+            GameObject lifeExplosionPrefab = PrefabManager.RegisterPrefab(assets, "Hellbroth_Life_Explosion");
+            if (lifeExplosionPrefab != null)
+            {
+                // Add the HealingAoe component if it doesn't already exist
+                if (lifeExplosionPrefab.GetComponent<PotionsPlus.HealingAoe>() == null)
+                {
+                    lifeExplosionPrefab.AddComponent<PotionsPlus.HealingAoe>();
+                    Debug.Log("[PotionsPlus] Added HealingAoe component to Hellbroth_Life_Explosion");
+                }
+            }
+            else
+            {
+                Debug.LogError("[PotionsPlus] Failed to register Hellbroth_Life_Explosion prefab");
+            }
+
             PrefabManager.RegisterPrefab(assets, "Hellbroth_Life_Orb_Projectile");
             PotionsPlus.wandProjectiles.Add("Hellbroth_Life_Orb_Projectile");
 
