@@ -18,13 +18,12 @@ namespace PotionsPlus;
 
 [BepInPlugin(ModGUID, ModName, ModVersion)]
 [BepInDependency("org.bepinex.plugins.groups", BepInDependency.DependencyFlags.SoftDependency)]
-//[BepInIncompatibility("org.bepinex.plugins.valheim_plus")]
 [BepInDependency("org.bepinex.plugins.devmod", BepInDependency.DependencyFlags.SoftDependency)]
-//[BepInIncompatibility("shudnal.ExtraSlots")]
+
 public class PotionsPlus : BaseUnityPlugin
 {
     private const string ModName = "PotionsPlus";
-    private const string ModVersion = "4.3.0";
+    private const string ModVersion = "4.3.1";
     private const string ModGUID = "com.odinplus.potionsplus";
 
     private static readonly ConfigSync configSync = new(ModName) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
@@ -598,7 +597,10 @@ public class PotionsPlus : BaseUnityPlugin
                     int quality = __instance.m_craftUpgradeItem != null ? __instance.m_craftUpgradeItem.m_quality + 1 : 1;
                     player.GetInventory().AddItem(__instance.m_craftRecipe.m_item.gameObject.name, __instance.m_craftRecipe.m_amount, quality, __instance.m_craftVariant, player.GetPlayerID(), player.GetPlayerName());
                 }
-                player.RaiseSkill("Alchemy");
+                if (alchemySkillEnabled.Value == Toggle.On)
+                {
+                    player.RaiseSkill("Alchemy");
+                }
             }
         }
     }
