@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="FlaskEffects.cs" />
     <Compile Include="GroupPotion.cs" />
+    <Compile Include="Libs\ItemManager.cs" />
+    <Compile Include="Libs\PieceManager.cs" />
     <Compile Include="Libs\SkillManager.cs" />
     <Compile Include="PotionsPlus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,13 +96,7 @@
     <Content Include="Libs\GroupsAPI.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Libs\ItemManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Libs\LocalizationManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Libs\PieceManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Libs\ServerSync.dll">
@@ -134,14 +130,8 @@
     <Reference Include="GroupsAPI">
       <HintPath>Libs\GroupsAPI.dll</HintPath>
     </Reference>
-    <Reference Include="ItemManager">
-      <HintPath>Libs\ItemManager.dll</HintPath>
-    </Reference>
     <Reference Include="LocalizationManager">
       <HintPath>Libs\LocalizationManager.dll</HintPath>
-    </Reference>
-    <Reference Include="PieceManager">
-      <HintPath>Libs\PieceManager.dll</HintPath>
     </Reference>
     <Reference Include="ServerSync">
       <HintPath>Libs\ServerSync.dll</HintPath>
@@ -150,6 +140,10 @@
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Steam\steamapps\common\Valheim\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.dll</HintPath>
@@ -181,6 +175,9 @@
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\..\..\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet, Version=16.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
       <HintPath>..\packages\YamlDotNet.16.1.3\lib\net47\YamlDotNet.dll</HintPath>

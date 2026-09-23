@@ -23,7 +23,7 @@ namespace PotionsPlus;
 public class PotionsPlus : BaseUnityPlugin
 {
     private const string ModName = "PotionsPlus";
-    private const string ModVersion = "4.3.1";
+    private const string ModVersion = "4.3.5";
     private const string ModGUID = "com.odinplus.potionsplus";
 
     private static readonly ConfigSync configSync = new(ModName) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
@@ -586,16 +586,16 @@ public class PotionsPlus : BaseUnityPlugin
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.DoCrafting))]
     private static class ApplyAlchemySkillOnAlchemyTableCrafting
     {
-        private static void Prefix(out int __state) => __state = (int)Game.instance.GetPlayerProfile().m_playerStats[PlayerStatType.Crafts];
+        private static void Prefix(out int __state) => __state = (int)Game.instance.GetPlayerProfile().GetStat(PlayerStatType.Crafts);
 
         private static void Postfix(InventoryGui __instance, Player player, int __state)
         {
-            if ((int)Game.instance.GetPlayerProfile().m_playerStats[PlayerStatType.Crafts] > __state && Player.m_localPlayer.GetCurrentCraftingStation()?.name.StartsWith("opalchemy") == true && __instance.m_craftUpgradeItem is null)
+            if ((int)Game.instance.GetPlayerProfile().GetStat(PlayerStatType.Crafts) > __state && Player.m_localPlayer.GetCurrentCraftingStation()?.name.StartsWith("opalchemy") == true && __instance.m_craftUpgradeItem is null)
             {
                 for (int i = DetermineExtraItems(Mathf.RoundToInt(player.GetSkillFactor("Alchemy") * 100), ZDOMan.instance.m_sessionID); i > 0; --i)
                 {
                     int quality = __instance.m_craftUpgradeItem != null ? __instance.m_craftUpgradeItem.m_quality + 1 : 1;
-                    player.GetInventory().AddItem(__instance.m_craftRecipe.m_item.gameObject.name, __instance.m_craftRecipe.m_amount, quality, __instance.m_craftVariant, player.GetPlayerID(), player.GetPlayerName());
+                    player.GetInventory().AddItem(__instance.m_craftRecipe.m_item.gameObject.name, __instance.m_craftRecipe.m_amount, quality, __instance.m_craftVariant, player.GetPlayerID(), player.GetPlayerName(), false, false);
                 }
                 if (alchemySkillEnabled.Value == Toggle.On)
                 {
